@@ -552,7 +552,7 @@
     var m_dateCache = {};
     var DateManager = function Constructor(date) {
       if (date instanceof moment === false) {
-        if (typeof date === 'string' || typeof date === 'number') {
+        if (typeof date === 'string' || typeof date === 'number' || typeof date === 'object') {
           date = moment(date);
         } else {
           console.error('`date` option is invalid type. (date: ' + date + ').');
@@ -855,7 +855,6 @@
             if (local.current[0] === null || local.current[1] === null) {
               return false;
             }
-            console.log(local.current);
             var firstSelectDate = local.current[0].format('YYYY-MM-DD');
             var lastSelectDate = local.current[1].format('YYYY-MM-DD');
             var firstDate = moment(Math.max(local.current[0].valueOf(), local.dateManager.date.clone().startOf('month').valueOf()));
@@ -1154,8 +1153,6 @@
                 var $this = $(this);
                 var position = 0;
                 var date = $this.data('date');
-                console.log('Data as date object : '+ new Date(date));
-                console.log('Date raw: '+date);
                 var preventSelect = false;
 
                 if ($this.hasClass(Helper.GetSubClass('UnitDisabled'))) {
@@ -1217,7 +1214,11 @@
                             local.current[0] = null;
                             local.current[1] = null;
                           } else {
-                            if(_this.settings.week > 0){
+                            var date = new Date(date);
+                            if(date.getDay() === 0){
+                              date = date.setDate(date.getDate() - 7)
+                            }
+                            if(_this.settings.week > 0){//hoyne
                               local.current[0] = moment(date).startOf('week').add(_this.settings.week,'days');
                               local.current[1] = moment(date).endOf('week').add(_this.settings.week,'days');
                             }else{
@@ -1295,7 +1296,6 @@
 
                       if (_this.settings.multiple === true) {
                         local.calendar.find('.' + rangeClass).removeClass(rangeClass).removeClass(rangeFirstClass).removeClass(rangeLastClass);
-                        console.log('Call');
                         generateDateRange.call();
                       }
 
@@ -1384,7 +1384,6 @@
 
             if (_this.settings.multiple === true) {
               local.calendar.find('.' + rangeClass).removeClass(rangeClass).removeClass(rangeFirstClass).removeClass(rangeLastClass);
-              console.log('Call');
               generateDateRange.call();
             }
           };
